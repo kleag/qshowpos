@@ -35,10 +35,10 @@ QShowPosWidget::QShowPosWidget(QShowPos* parent) :
 void QShowPosWidget::mousePressEvent ( QMouseEvent * event )
 {
   QTextEdit::mousePressEvent(event);
-  qDebug() << "QShowPosWidget::mousePressEvent cursor position: " << textCursor().position();
+//   qDebug() << "QShowPosWidget::mousePressEvent cursor position: " << textCursor().position();
   if (event->button() ==  Qt::LeftButton
     && event->modifiers() != Qt::ControlModifier)
   {
-    m_parent->selectEventAt(textCursor().position(), event->globalPos());
+    ((QShowPos*)parent())->selectEventAt(textCursor().position(), event->globalPos());
   }
 }

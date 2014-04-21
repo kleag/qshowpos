@@ -1,0 +1,14 @@
+Prerequisites
+===========
+
+The following libraries are necessary for the installation :
+Qt (4.8)
+
+Installation
+============
+mkdir build
+cd build
+cmake ..
+make 
+sudo make install
+

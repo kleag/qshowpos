@@ -1,5 +1,5 @@
 /*
- *    Copyright 2002-2013 CEA LIST
+ *    Copyright 2014 CEA LIST
  * 
  *    This file is part of QShowPos.
  * 
@@ -38,14 +38,10 @@ class QShowPos:public QMainWindow
   Q_OBJECT
 
 public:
-  QShowPos();
+  QShowPos(const QStringList& files);
   ~QShowPos();
 
   void selectEventAt(quint32 position, const QPoint& eventPos);
-
-public Q_SLOTS:
-
-  void slotTextCursorPositionChanged();
 
 protected:
   void closeEvent( QCloseEvent *event );
@@ -82,43 +78,27 @@ private:
 
   QString strippedName( const QString &fullFileName );
 
-  void hideAll();
-
-  QIcon iconFactory(const QColor& color);
-
   QShowPosWidget* m_textEdit;
 
   QString m_curFile;
-
   QString m_currentDirectory;
 
   QMenu *fileMenu;
-
   QMenu *editMenu;
-
   QMenu *helpMenu;
 
   QToolBar *fileToolBar;
-
   QToolBar *editToolBar;
-
+  
   QAction *openAct;
-
   QAction *exitAct;
-
   QAction *aboutAct;
-
   QAction *aboutQtAct;
-
   QAction *m_gotoAct;
-
-  QAction* searchAction;
-
-  QAction* searchNextAction;
+  QAction* m_searchAction;
+  QAction* m_searchNextAction;
   
   QTextCursor m_lastSearchResult;
-
-  QString m_text;
 };
 
 #endif

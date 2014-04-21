@@ -1,5 +1,5 @@
 /*
- *    Copyright 2002-2013 CEA LIST
+ *    Copyright 2014 CEA LIST
  * 
  *    This file is part of QShowPos.
  * 
@@ -33,16 +33,14 @@
 
 #define VERSION "0.0.1"
 
-QShowPos::QShowPos() :  m_currentDirectory()
+QShowPos::QShowPos(const QStringList& files) :  m_currentDirectory()
 {
   QFont font = QApplication::font();
   font.setPointSize(12);
   QApplication::setFont(font);
 
   m_textEdit = new QShowPosWidget(this);
-  m_textEdit->setReadOnly ( true );
   setCentralWidget( m_textEdit );
-  connect(m_textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(slotTextCursorPositionChanged()));
 
   createActions();
   createMenus();
@@ -54,33 +52,36 @@ QShowPos::QShowPos() :  m_currentDirectory()
   connect( m_textEdit->document(), SIGNAL( contentsChanged() ),
            this, SLOT( documentWasModified() ) );
 
+  if (!files.isEmpty())
+  {
+    loadFile(files.first());
+  }
 }
 
 void QShowPos::closeEvent( QCloseEvent *event )
 {
   qDebug() << "QShowPos::closeEvent";
-    event->accept();
+  event->accept();
 }
 
 void QShowPos::open()
 {
   qDebug() << "QShowPos::open";
-    QString fileName = QFileDialog::getOpenFileName( this, 
-        "Select a Text to Annotate", m_currentDirectory.isEmpty()?QString():m_currentDirectory  );
+  QString fileName = QFileDialog::getOpenFileName( this, 
+      tr("Select a File"), m_currentDirectory.isEmpty()?QString():m_currentDirectory  );
 
-    if ( !fileName.isEmpty() )
-    {
-      m_currentDirectory = QFileInfo(fileName).absoluteDir().absolutePath();
-      loadFile( fileName );
-    }
+  if ( !fileName.isEmpty() )
+  {
+    m_currentDirectory = QFileInfo(fileName).absoluteDir().absolutePath();
+    loadFile( fileName );
+  }
 }
 
 void QShowPos::about()
 {
   qDebug() << "QShowPos::about";
   QMessageBox::about( this, tr( "Q Show Position" ),
-                      tr( "The <b>Q Show Position</b> tool shows the postion of the cursor in a file in "
-                          "UTF16 codepoints as returned by.<br>Version %1<br>"
+                      tr( "The <b>Q Show Position</b> tool shows the postion of the cursor in a file in UTF16 codepoints.<br>Version %1<br>"
                           "Copyright 2014 CEA LIST/LVIC, released under AGPL" ).arg(VERSION) );
 }
 
@@ -116,15 +117,15 @@ void QShowPos::createActions()
   connect( m_gotoAct, SIGNAL( triggered() ), this, SLOT( slotGoto() ) );
 
 
-  searchAction = new QAction( tr( "Search" ), this );
-  searchAction->setShortcut( tr( "Ctrl+F" ) );
-  searchAction->setStatusTip( tr( "Search a string of text" ) );
-  connect( searchAction, SIGNAL( triggered() ), this, SLOT( slotSearch() ) );
+  m_searchAction = new QAction( tr( "Search" ), this );
+  m_searchAction->setShortcut( tr( "Ctrl+F" ) );
+  m_searchAction->setStatusTip( tr( "Search a string of text" ) );
+  connect( m_searchAction, SIGNAL( triggered() ), this, SLOT( slotSearch() ) );
 
-  searchNextAction = new QAction( tr( "Search Next" ), this );
-  searchNextAction->setShortcut( tr( "F3" ) );
-  searchNextAction->setStatusTip( tr( "Search the next occurrence of the last searched text" ) );
-  connect( searchNextAction, SIGNAL( triggered() ), this, SLOT( slotSearchNext() ) );
+  m_searchNextAction = new QAction( tr( "Search Next" ), this );
+  m_searchNextAction->setShortcut( tr( "F3" ) );
+  m_searchNextAction->setStatusTip( tr( "Search the next occurrence of the last searched text" ) );
+  connect( m_searchNextAction, SIGNAL( triggered() ), this, SLOT( slotSearchNext() ) );
   
 }
 
@@ -138,8 +139,8 @@ void QShowPos::createMenus()
 
   editMenu = menuBar()->addMenu( tr( "&Edit" ) );
   editMenu->addSeparator();
-  editMenu->addAction( searchAction );
-  editMenu->addAction( searchNextAction );
+  editMenu->addAction( m_searchAction );
+  editMenu->addAction( m_searchNextAction );
   
   menuBar()->addSeparator();
 
@@ -205,8 +206,7 @@ void QShowPos::loadFile( const QString &fileName )
   cursor.mergeCharFormat(modifier);
   m_textEdit->setTextCursor(cursor);
   m_textEdit->setTextColor( Qt::black );
-  m_text = in.readAll();
-  m_textEdit->setPlainText(m_text);
+  m_textEdit->setPlainText(in.readAll());
   QApplication::restoreOverrideCursor();
 
   setCurrentFile( fileName );
@@ -333,31 +333,9 @@ void QShowPos::slotGoto()
   }
 }
 
-void QShowPos::slotTextCursorPositionChanged()
-{
-//   qDebug() << "QShowPos::slotTextCursorPositionChanged. It's now " << m_textEdit->textCursor().position();
-}
-
 void QShowPos::selectEventAt(quint32 position, const QPoint& eventPos)
 {
   qDebug() << "QShowPos::selectEventAt: "<<position<<", " << eventPos;
   statusBar()->showMessage( tr( "Position: %1").arg(position) );
-}
-
-void QShowPos::hideAll()
-{
-  qDebug() << "QShowPos::hideAll";
-  m_textEdit->clear();
-  QTextCursor cursor;
-  m_textEdit->setTextCursor(cursor);
-  m_textEdit->setPlainText(m_text);
-}
-
-QIcon QShowPos::iconFactory(const QColor& color)
-{
-  qDebug() << "QShowPos::iconFactory";
-  QPixmap pix(10,10);
-  pix.fill(color);
-  return QIcon(pix);
 }
 
