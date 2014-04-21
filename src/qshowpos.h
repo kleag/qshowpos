@@ -32,6 +32,7 @@
 class QAction;
 class QMenu;
 class QShowPosWidget;
+class QRecentFilesMenu;
 
 class QShowPos:public QMainWindow
 {
@@ -59,6 +60,8 @@ private Q_SLOTS:
 
   void slotSearchNext();
   
+  void loadFile( const QString &fileName );
+
 private:
   void createActions();
 
@@ -72,8 +75,6 @@ private:
 
   void writeSettings();
 
-  void loadFile( const QString &fileName );
-
   void setCurrentFile( const QString &fileName );
 
   QString strippedName( const QString &fullFileName );
@@ -86,6 +87,7 @@ private:
   QMenu *fileMenu;
   QMenu *editMenu;
   QMenu *helpMenu;
+  QRecentFilesMenu *recentFilesMenu;
 
   QToolBar *fileToolBar;
   QToolBar *editToolBar;

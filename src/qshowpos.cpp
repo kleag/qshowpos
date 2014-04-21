@@ -24,6 +24,8 @@
 #include <QtGui>
 #include "qshowpos.h"
 #include "qshowposWidget.h"
+#include "QRecentFilesMenu.h"
+
 
 #include <QTextStream>
 #include <QCloseEvent>
@@ -33,7 +35,7 @@
 
 #define VERSION "0.0.1"
 
-QShowPos::QShowPos(const QStringList& files) :  m_currentDirectory()
+QShowPos::QShowPos(const QStringList& files) : QMainWindow(), m_currentDirectory()
 {
   QFont font = QApplication::font();
   font.setPointSize(12);
@@ -56,6 +58,12 @@ QShowPos::QShowPos(const QStringList& files) :  m_currentDirectory()
   {
     loadFile(files.first());
   }
+}
+
+QShowPos::~QShowPos()
+{
+  qDebug() << "QShowPos::~QShowPos";
+  writeSettings();
 }
 
 void QShowPos::closeEvent( QCloseEvent *event )
@@ -134,6 +142,18 @@ void QShowPos::createMenus()
   qDebug() << "QShowPos::createMenus";
   fileMenu = menuBar()->addMenu( tr( "&File" ) );
   fileMenu->addAction( openAct );
+  
+  recentFilesMenu = new QRecentFilesMenu(tr("Recent Files"), fileMenu);
+
+  QSettings settings( "CEA LIST", "qshowpos" );
+  recentFilesMenu->restoreState(settings.value("recentFiles").toByteArray());
+
+  connect(recentFilesMenu, SIGNAL(recentFileTriggered(const QString &)), this, SLOT(loadFile(const QString &)));
+
+  fileMenu->addMenu(recentFilesMenu);
+
+
+  
   fileMenu->addSeparator();
   fileMenu->addAction( exitAct );
 
@@ -175,6 +195,7 @@ void QShowPos::writeSettings()
 {
   qDebug() << "QShowPos::writeSettings";
   QSettings settings( "CEA LIST", "qshowpos" );
+  settings.setValue("recentFiles", recentFilesMenu->saveState());
 }
 
 void QShowPos::loadFile( const QString &fileName )
@@ -210,6 +231,8 @@ void QShowPos::loadFile( const QString &fileName )
   QApplication::restoreOverrideCursor();
 
   setCurrentFile( fileName );
+  recentFilesMenu->addRecentFile(fileName);
+
   statusBar()->showMessage( tr( "File loaded" ), 2000 );
 }
 
@@ -234,12 +257,6 @@ QString QShowPos::strippedName( const QString &fullFileName )
 {
   qDebug() << "QShowPos::strippedName";
   return QFileInfo( fullFileName ).fileName();
-}
-
-QShowPos::~QShowPos()
-
-{
-  qDebug() << "QShowPos::~QShowPos";
 }
 
 void QShowPos::slotSearch()

@@ -6,10 +6,11 @@ INCLUDE(${QT_USE_FILE})
 SET(qshowpos_SRCS
            main.cpp
            qshowpos.cpp
-           qshowposWidget.cpp)
+           qshowposWidget.cpp
+           QRecentFilesMenu.cpp)
 
 set (qshowpos_MOC_HEADERS qshowpos.h
-           qshowposWidget.h)
+           qshowposWidget.h QRecentFilesMenu.h)
 qt4_wrap_cpp (qshowpos_MOC_OUTFILES ${qshowpos_MOC_HEADERS})
 
 qt4_add_resources(qshowpos_QRCS qshowpos.qrc)

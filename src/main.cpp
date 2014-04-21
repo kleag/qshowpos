@@ -36,8 +36,8 @@ int main( int argc, char *argv[] )
     qDebug() << "Arg" << i << argv[i];
     args << QString::fromUtf8(argv[i]) ;
   }
-  QShowPos * mw = new QShowPos(args);
-  mw->show();
+  QShowPos mw(args);
+  mw.show();
   return app.exec();
 }
 
