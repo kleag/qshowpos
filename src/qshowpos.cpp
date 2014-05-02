@@ -189,6 +189,16 @@ void QShowPos::readSettings()
 {
   qDebug() << "QShowPos::readSettings";
   QSettings settings( "CEA LIST", "qshowpos" );
+  QPoint pos = settings.value( "pos", QPoint( 200, 200 ) ).toPoint();
+  QSize size = settings.value( "size", QSize( 400, 400 ) ).toSize();
+  m_currentDirectory = settings.value( "dirconfig", QString() ).toString();
+  QString fileconfig = settings.value( "fileconfig", QString() ).toString();
+  if (!fileconfig.isEmpty())
+  {
+    loadFile(fileconfig);
+  }
+  resize( size );
+  move( pos );
 }
 
 void QShowPos::writeSettings()
@@ -196,6 +206,10 @@ void QShowPos::writeSettings()
   qDebug() << "QShowPos::writeSettings";
   QSettings settings( "CEA LIST", "qshowpos" );
   settings.setValue("recentFiles", recentFilesMenu->saveState());
+  settings.setValue( "pos", pos() );
+  settings.setValue( "size", size() );
+  settings.setValue( "dirconfig", m_currentDirectory );
+  settings.setValue( "fileconfig", m_curFile );
 }
 
 void QShowPos::loadFile( const QString &fileName )
