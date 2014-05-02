@@ -40,6 +40,8 @@ public:
 protected:
   void mousePressEvent ( QMouseEvent * event );
   QShowPos* m_parent;
+public slots:
+    void slotCursorPositionChanged();
 };
 
 #endif // QSHOWPOSWIDGET_H

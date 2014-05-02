@@ -30,6 +30,7 @@ QShowPosWidget::QShowPosWidget(QShowPos* parent) :
   QTextEdit(parent),
   m_parent(parent)
 {
+  connect(this,SIGNAL(cursorPositionChanged()),this,SLOT(slotCursorPositionChanged()));
 }
 
 void QShowPosWidget::mousePressEvent ( QMouseEvent * event )
@@ -41,4 +42,9 @@ void QShowPosWidget::mousePressEvent ( QMouseEvent * event )
   {
     ((QShowPos*)parent())->selectEventAt(textCursor().position(), event->globalPos());
   }
+}
+
+void QShowPosWidget::slotCursorPositionChanged()
+{
+    ((QShowPos*)parent())->selectEventAt(textCursor().position(), QPoint());
 }
