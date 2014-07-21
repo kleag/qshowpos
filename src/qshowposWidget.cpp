@@ -27,8 +27,7 @@
 #include <QDebug>
 
 QShowPosWidget::QShowPosWidget(QShowPos* parent) :
-  QTextEdit(parent),
-  m_parent(parent)
+  QTextEdit(parent)
 {
   connect(this,SIGNAL(cursorPositionChanged()),this,SLOT(slotCursorPositionChanged()));
 }

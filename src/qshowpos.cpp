@@ -62,19 +62,19 @@ QShowPos::QShowPos(const QStringList& files) : QMainWindow(), m_currentDirectory
 
 QShowPos::~QShowPos()
 {
-  qDebug() << "QShowPos::~QShowPos";
+//   qDebug() << "QShowPos::~QShowPos";
   writeSettings();
 }
 
 void QShowPos::closeEvent( QCloseEvent *event )
 {
-  qDebug() << "QShowPos::closeEvent";
+//   qDebug() << "QShowPos::closeEvent";
   event->accept();
 }
 
 void QShowPos::open()
 {
-  qDebug() << "QShowPos::open";
+//   qDebug() << "QShowPos::open";
   QString fileName = QFileDialog::getOpenFileName( this, 
       tr("Select a File"), m_currentDirectory.isEmpty()?QString():m_currentDirectory  );
 
@@ -87,7 +87,7 @@ void QShowPos::open()
 
 void QShowPos::about()
 {
-  qDebug() << "QShowPos::about";
+//   qDebug() << "QShowPos::about";
   QMessageBox::about( this, tr( "Q Show Position" ),
                       tr( "The <b>Q Show Position</b> tool shows the postion of the cursor in a file in UTF16 codepoints.<br>Version %1<br>"
                           "Copyright 2014 CEA LIST/LVIC, released under AGPL" ).arg(VERSION) );
@@ -95,13 +95,13 @@ void QShowPos::about()
 
 void QShowPos::documentWasModified()
 {
-  qDebug() << "QShowPos::documentWasModified";
+//   qDebug() << "QShowPos::documentWasModified";
   setWindowModified( true );
 }
 
 void QShowPos::createActions()
 {
-  qDebug() << "QShowPos::createActions";
+//   qDebug() << "QShowPos::createActions";
   openAct = new QAction( QIcon( ":/fileopen.xpm" ), tr( "&Open..." ), this );
   openAct->setShortcut( tr( "Ctrl+O" ) );
   openAct->setStatusTip( tr( "Open an existing file" ) );
@@ -121,6 +121,7 @@ void QShowPos::createActions()
   connect( aboutQtAct, SIGNAL( triggered() ), qApp, SLOT( aboutQt() ) );
 
   m_gotoAct = new QAction( tr( "Go to..." ), this );
+  m_gotoAct->setShortcut( tr( "Ctrl+G" ) );
   m_gotoAct->setStatusTip( tr( "Opens a dialog to ask where to move inside the text" ) );
   connect( m_gotoAct, SIGNAL( triggered() ), this, SLOT( slotGoto() ) );
 
@@ -139,7 +140,7 @@ void QShowPos::createActions()
 
 void QShowPos::createMenus()
 {
-  qDebug() << "QShowPos::createMenus";
+//   qDebug() << "QShowPos::createMenus";
   fileMenu = menuBar()->addMenu( tr( "&File" ) );
   fileMenu->addAction( openAct );
   
@@ -171,7 +172,7 @@ void QShowPos::createMenus()
 
 void QShowPos::createToolBars()
 {
-  qDebug() << "QShowPos::createToolBars";
+//   qDebug() << "QShowPos::createToolBars";
   fileToolBar = addToolBar( tr( "File" ) );
   fileToolBar->addAction( openAct );
 
@@ -181,13 +182,13 @@ void QShowPos::createToolBars()
 
 void QShowPos::createStatusBar()
 {
-  qDebug() << "QShowPos::createStatusBar";
+//   qDebug() << "QShowPos::createStatusBar";
   statusBar()->showMessage( tr( "Ready" ) );
 }
 
 void QShowPos::readSettings()
 {
-  qDebug() << "QShowPos::readSettings";
+//   qDebug() << "QShowPos::readSettings";
   QSettings settings( "CEA LIST", "qshowpos" );
   QPoint pos = settings.value( "pos", QPoint( 200, 200 ) ).toPoint();
   QSize size = settings.value( "size", QSize( 400, 400 ) ).toSize();
@@ -203,7 +204,7 @@ void QShowPos::readSettings()
 
 void QShowPos::writeSettings()
 {
-  qDebug() << "QShowPos::writeSettings";
+//   qDebug() << "QShowPos::writeSettings";
   QSettings settings( "CEA LIST", "qshowpos" );
   settings.setValue("recentFiles", recentFilesMenu->saveState());
   settings.setValue( "pos", pos() );
@@ -214,7 +215,7 @@ void QShowPos::writeSettings()
 
 void QShowPos::loadFile( const QString &fileName )
 {
-  qDebug() << "QShowPos::loadFile" << fileName;
+//   qDebug() << "QShowPos::loadFile" << fileName;
   QFile file( fileName );
 
   if ( !file.open( QFile::ReadOnly | QFile::Text ) )
@@ -252,7 +253,7 @@ void QShowPos::loadFile( const QString &fileName )
 
 void QShowPos::setCurrentFile( const QString &fileName )
 {
-  qDebug() << "QShowPos::setCurrentFile" << fileName;
+//   qDebug() << "QShowPos::setCurrentFile" << fileName;
   m_curFile = fileName;
   m_textEdit->document()->setModified( false );
   setWindowModified( false );
@@ -269,16 +270,16 @@ void QShowPos::setCurrentFile( const QString &fileName )
 
 QString QShowPos::strippedName( const QString &fullFileName )
 {
-  qDebug() << "QShowPos::strippedName";
+//   qDebug() << "QShowPos::strippedName";
   return QFileInfo( fullFileName ).fileName();
 }
 
 void QShowPos::slotSearch()
 {
-  qDebug() << "QShowPos::slotSearch";
+//   qDebug() << "QShowPos::slotSearch";
   if (!m_lastSearchResult.isNull())
   {
-    m_textEdit->undo();
+//     m_textEdit->undo();
   }
   
   QString searchText = QInputDialog::getText(this, tr("Search Text"), tr("Enter the text to search&nbsp;:"));
@@ -289,11 +290,11 @@ void QShowPos::slotSearch()
   }
 
   QTextDocument* doc = m_textEdit->document();
-  m_lastSearchResult = doc->find(searchText, 0);
+  m_lastSearchResult = doc->find(searchText, m_textEdit->textCursor().position());
 
   if (!m_lastSearchResult.isNull())
   {
-    qDebug() << searchText << "found at" << m_lastSearchResult.position();
+//     qDebug() << searchText << "found at" << m_lastSearchResult.position();
     QTextCharFormat modifier = m_lastSearchResult.charFormat();
     modifier.setUnderlineColor(Qt::black);
     modifier.setUnderlineStyle (QTextCharFormat::WaveUnderline);
@@ -309,13 +310,14 @@ void QShowPos::slotSearch()
   }
   else
   {
-    qDebug() << searchText << "NOT found";
+//     qDebug() << searchText << "NOT found";
+    statusBar()->showMessage( tr( "NOT found") );
   }
 }
 
 void QShowPos::slotSearchNext()
 {
-  qDebug() << "QShowPos::slotSearchNext";
+//   qDebug() << "QShowPos::slotSearchNext";
   if (m_lastSearchResult.isNull())
   {
     return;
@@ -327,7 +329,7 @@ void QShowPos::slotSearchNext()
 
   if (!m_lastSearchResult.isNull())
   {
-    qDebug() << m_lastSearchResult.selectedText() << "found again at" << m_lastSearchResult.position();
+//     qDebug() << m_lastSearchResult.selectedText() << "found again at" << m_lastSearchResult.position();
     QTextCharFormat modifier = m_lastSearchResult.charFormat();
     modifier.setUnderlineColor(Qt::black);
     modifier.setUnderlineStyle (QTextCharFormat::WaveUnderline);
@@ -343,13 +345,14 @@ void QShowPos::slotSearchNext()
   }
   else
   {
-    qDebug() << m_lastSearchResult.selectedText() << "NOT found again";
+//     qDebug() << m_lastSearchResult.selectedText() << "NOT found again";
+    statusBar()->showMessage( tr( "NOT found again") );
   }
 }
 
 void QShowPos::slotGoto()
 {
-  qDebug() << "QShowPos::slotGoto";
+//   qDebug() << "QShowPos::slotGoto";
   bool ok;
   int offset = QInputDialog::getInteger(this, tr("Jump to input"),
                                         tr("Go to:"), 0, 0, m_textEdit->document()->toPlainText().size(),
@@ -358,15 +361,17 @@ void QShowPos::slotGoto()
   {
     QTextCursor cursor = m_textEdit->textCursor ();
     cursor.setPosition(offset);
-    cursor.movePosition(QTextCursor::StartOfLine);
-    cursor.movePosition(QTextCursor::EndOfLine,QTextCursor::KeepAnchor);
+    cursor.movePosition(QTextCursor::NextWord,QTextCursor::KeepAnchor);
     m_textEdit->setTextCursor(cursor);
   }
 }
 
 void QShowPos::selectEventAt(quint32 position, const QPoint& eventPos)
 {
-  qDebug() << "QShowPos::selectEventAt: "<<position<<", " << eventPos;
+//   qDebug() << "QShowPos::selectEventAt: "<<position<<", " << eventPos;
   statusBar()->showMessage( tr( "Position: %1").arg(position) );
+  QTextCursor cursor = m_textEdit->textCursor();
+  cursor.setPosition(position);
+  m_textEdit->setTextCursor(cursor);
 }
 

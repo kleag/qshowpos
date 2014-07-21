@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
   if (argc >= 1)
   for (unsigned int i = 1; i < argc; i++)
   {
-    qDebug() << "Arg" << i << argv[i];
+//     qDebug() << "Arg" << i << argv[i];
     args << QString::fromUtf8(argv[i]) ;
   }
   QShowPos mw(args);
