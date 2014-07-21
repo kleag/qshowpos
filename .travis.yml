@@ -3,5 +3,5 @@ compiler:
   - gcc
   - clang
 # Change this to your needs
-script: mkdir build && cd build && cmake .. && make && make packege
+script: mkdir build && cd build && cmake .. && make && make package
 
