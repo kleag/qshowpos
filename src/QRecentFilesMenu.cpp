@@ -125,7 +125,7 @@ void QRecentFilesMenu::setMaxCount(int count)
 void QRecentFilesMenu::menuTriggered(QAction* action)
 {
     if (action->data().isValid())
-        emit recentFileTriggered(action->data().toString());
+        Q_EMIT recentFileTriggered(action->data().toString());
 }
 
 void QRecentFilesMenu::updateRecentFileActions()

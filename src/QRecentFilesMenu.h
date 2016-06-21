@@ -68,7 +68,7 @@ public:
      */
     bool restoreState(const QByteArray &state);
 
-public slots:
+public Q_SLOTS:
     //!
     void addRecentFile(const QString &fileName);
 
@@ -77,11 +77,12 @@ public slots:
 
     //! Sets the maximum number of entries int he menu.
     void setMaxCount(int);
-signals:
+
+Q_SIGNALS:
     //! This signal is emitted when a recent file in this menu is triggered.
     void recentFileTriggered(const QString & filename);
 
-private slots:
+private Q_SLOTS:
     void menuTriggered(QAction*);
     void updateRecentFileActions();
 private:

@@ -27,10 +27,15 @@
 #include "QRecentFilesMenu.h"
 
 
+#include <QApplication>
 #include <QTextStream>
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMessageBox>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QStatusBar>
 #include <iostream>
 
 #define VERSION "0.0.1"
@@ -218,7 +223,7 @@ void QShowPos::loadFile( const QString &fileName )
 //   qDebug() << "QShowPos::loadFile" << fileName;
   QFile file( fileName );
 
-  if ( !file.open( QFile::ReadOnly | QFile::Text ) )
+  if ( !file.open( QFile::ReadOnly ) )
   {
     QMessageBox::warning( this, tr( "Application" ),
                           tr( "Cannot read file %1:\n%2." )
@@ -242,7 +247,9 @@ void QShowPos::loadFile( const QString &fileName )
   cursor.mergeCharFormat(modifier);
   m_textEdit->setTextCursor(cursor);
   m_textEdit->setTextColor( Qt::black );
-  m_textEdit->setPlainText(in.readAll());
+  QString text = in.readAll();
+  text.replace('\r',"·");
+  m_textEdit->setPlainText(text);
   QApplication::restoreOverrideCursor();
 
   setCurrentFile( fileName );

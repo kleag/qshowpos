@@ -4,7 +4,22 @@ cmake_minimum_required(VERSION 2.8)
 
 include(SystemSpecificInformations.cmake)
 
-find_package(Qt4 REQUIRED)
+add_definitions(-D QT_NO_KEYWORDS)
+include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
+addQt5Modules(Core Gui Widgets)
+include_directories(${Qt5_INCLUDES})
+get_target_property(QtCore_location Qt5::Core LOCATION)
+get_target_property(QtGui_location Qt5::Gui LOCATION)
+get_target_property(QtWidgets_location Qt5::Widgets LOCATION)
+set(QT_LIBRARIES "${Qt5_LIBRARIES}")
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(FILES ${QtCore_location}
+    ${QtGui_location}
+    ${QtWidgets_location}
+  DESTINATION ${LIB_INSTALL_DIR})
+endif ()
+
 
 add_subdirectory(src)
 

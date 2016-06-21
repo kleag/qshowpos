@@ -39,7 +39,8 @@ public:
 
 protected:
   void mousePressEvent ( QMouseEvent * event );
-public slots:
+  
+public Q_SLOTS:
     void slotCursorPositionChanged();
 };
 
